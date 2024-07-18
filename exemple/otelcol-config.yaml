@@ -1,0 +1,29 @@
+#https://opentelemetry.io/docs/collector/configuration/
+
+receivers:
+  # Data sources: traces
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+    timeout: 1s
+
+exporters:
+  logging:
+    loglevel: debug
+
+  # Data sources: traces
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger, logging]
