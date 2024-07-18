@@ -13,6 +13,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/sdk/resource"
+	"go.opentelemetry.io/otel/trace"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
@@ -24,15 +25,21 @@ func main() {
 		tracesdk.WithBatcher(exp),
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("FlamegoService"),
+			semconv.ServiceNameKey.String("exemple"),
 		)),
 	)
 
 	otel.SetTracerProvider(tp)
 
 	f := flamego.Classic()
-	f.Use(tracing.Tracing(tp.Tracer("Flamego")))
-	f.Get("/", func() string {
+
+	f.Use(tracing.Tracing(tp.Tracer("middleware")))
+
+	f.Get("/", func(c flamego.Context, parent trace.Span) string {
+		tracer := otel.Tracer("handler")
+		_, sp := tracer.Start(trace.ContextWithSpan(c.Request().Context(), parent), "Hello")
+		defer sp.End()
+
 		return "Hello, Flamego!"
 	})
 	f.Run()
