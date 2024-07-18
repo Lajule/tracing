@@ -2,8 +2,6 @@ module github.com/Lajule/tracing
 
 go 1.21
 
-toolchain go1.21.1
-
 require (
 	github.com/flamego/flamego v1.9.4
 	go.opentelemetry.io/otel v1.28.0
