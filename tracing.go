@@ -1,6 +1,8 @@
 package tracing
 
 import (
+	"context"
+
 	"github.com/flamego/flamego"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/propagation"
@@ -25,17 +27,18 @@ func Tracing(tracer trace.Tracer) flamego.Handler {
 
 		operation := r.Method + " " + r.URL.Path
 
+		var ctx context.Context
 		var span trace.Span
 
 		if remoteSpanCtx.IsValid() {
-			_, span = tracer.Start(trace.ContextWithRemoteSpanContext(r.Context(), remoteSpanCtx), operation, options...)
+			ctx, span = tracer.Start(trace.ContextWithRemoteSpanContext(r.Context(), remoteSpanCtx), operation, options...)
 		} else {
-			_, span = tracer.Start(r.Context(), operation, options...)
+			ctx, span = tracer.Start(r.Context(), operation, options...)
 		}
 
 		defer span.End()
 
-		c.Map(span)
+		c.Map(ctx)
 		c.Next()
 	})
 }
