@@ -5,7 +5,8 @@ services:
       - MYSQL_ROOT_PASSWORD=otel_password
       - MYSQL_DATABASE=db
     volumes:
-      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/2.sql
     healthcheck:
       test:
         mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
