@@ -1,6 +1,6 @@
 # tracing
 
-Use [OpenTelemetry][1] with Flamego framework.
+Use [OpenTelemetry][1] with [Flamego][2] framework.
 
 
 ## Installation
@@ -20,7 +20,6 @@ import (
 	"github.com/Lajule/tracing"
 	"github.com/flamego/flamego"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -55,7 +54,7 @@ func main() {
 	f.Use(tracing.Tracing())
 
 	f.Get("/", func(parent context.Context) string {
-		ctx, child := otel.Tracer("handler").Start(parent, "Hello")
+		_, child := otel.Tracer("handler").Start(parent, "Hello")
 		defer child.End()
 		return "Hello!"
 	})
@@ -69,3 +68,4 @@ func main() {
 This project is under the MIT License. See the [LICENSE](LICENSE) file for the full license text.
 
 [1]: https://opentelemetry.io/
+[2]: https://flamego.dev/
