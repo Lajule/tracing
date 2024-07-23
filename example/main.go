@@ -6,11 +6,11 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/Lajule/tracing"
 	"github.com/Lajule/tracing/example/model"
-	"github.com/flamego/flamego"
 	"github.com/XSAM/otelsql"
+	"github.com/flamego/flamego"
+	_ "github.com/go-sql-driver/mysql"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
@@ -50,11 +50,7 @@ func main() {
 
 	f := flamego.Classic()
 
-	f.Use(flamego.Renderer(
-		flamego.RenderOptions{
-			JSONIndent: "  ",
-		},
-	))
+	f.Use(flamego.Renderer())
 
 	f.Use(func(c flamego.Context) {
 		c.Map(model.New(db))

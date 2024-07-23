@@ -5,11 +5,9 @@ services:
       - MYSQL_ROOT_PASSWORD=otel_password
       - MYSQL_DATABASE=db
     volumes:
-      - ./schema.sql:/docker-entrypoint-initdb.d/1.sql
-      - ./init.sql:/docker-entrypoint-initdb.d/2.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
-      test:
-        mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=$$MYSQL_ROOT_PASSWORD
       start_period: 5s
       interval: 5s
       timeout: 5s
@@ -17,7 +15,7 @@ services:
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.91.0
-    command: ['--config=/etc/otel-collector.yaml']
+    command: ["--config=/etc/otel-collector.yaml"]
     volumes:
       - ./otel-collector.yaml:/etc/otel-collector.yaml
     depends_on:
